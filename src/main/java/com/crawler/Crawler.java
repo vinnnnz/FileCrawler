@@ -29,7 +29,7 @@ public class Crawler implements Callable<List<String>> {
 			List<Future<List<String>>> taskList = new ArrayList<>();
 			if (files != null) {
 				for (File file : files) {
-					//System.out.println(file.getAbsolutePath());
+					System.out.println(file.getAbsolutePath());
 					if (file.isDirectory()) {
 						Crawler crawler = new Crawler(fileName, file);
 						FutureTask<List<String>> task = new FutureTask<List<String>>(crawler);
@@ -38,6 +38,7 @@ public class Crawler implements Callable<List<String>> {
 
 						Thread nextComingThread = new Thread(task);
 						nextComingThread.start();
+						nextComingThread.join();
 					} else {
 						if (file.getName().contains(fileName)) {
 							foundFiles.add(file.getAbsolutePath());

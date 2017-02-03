@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class CrawlerUtil {
 
@@ -22,9 +24,6 @@ public class CrawlerUtil {
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-			//System.out.println("Enter directory name: \n");
-			// String directory = br.readLine();
-			// File directoryName = new File(directory);
 			System.out.println("Enter file name to search: \n");
 			String fileName = br.readLine();
 
@@ -33,13 +32,17 @@ public class CrawlerUtil {
 				System.out.println(path);
 				Crawler crawler = new Crawler(fileName, path);
 
-				FutureTask<List<String>> task = new FutureTask<List<String>>(crawler);
-				Thread thread = new Thread(task);
-				thread.start();
+				//FutureTask<List<String>> task = new FutureTask<List<String>>(crawler);
+				//Thread thread = new Thread(task);
+				//thread.start();
+				ExecutorService service = Executors.newFixedThreadPool(100);
+				Future<List<String>> task = service.submit(crawler);
+				
 
 				List<String> results;
 				try {
 					results = task.get();
+					System.out.println("Results:");
 					for (String result : results) {
 						System.out.println(result);
 					}
@@ -47,7 +50,7 @@ public class CrawlerUtil {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				service.shutdown();
 			});
 
 		} catch (Exception e) {
